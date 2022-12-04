@@ -6,8 +6,8 @@
 
 FileType StringToFileType(std::string string)
 {
-	std::vector<std::string> bitmapFormats = {"BM", "BA", "CI", "CP", "IC", "PT"};
-	for (std::string format : bitmapFormats)
+	const static std::vector<std::string> BitmapFormats = { "BM", "BA", "CI", "CP", "IC", "PT" };
+	for (const std::string& format : BitmapFormats)
 	{
 		if (string == format)
 		{
