@@ -84,7 +84,7 @@ class BitmapImage {
 		int RgbToGreyScale(int red, int green, int blue);
 		
 		std::string m_filename;
-		FileType m_fileType = INVALID;
+		FileType m_fileType = FileType::INVALID;
 		int m_fileSize = 0;
 		int m_pixelOffset = 0;
 		int m_headerSize = 0;

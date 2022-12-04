@@ -11,40 +11,39 @@ FileType StringToFileType(std::string string)
 	{
 		if (string == format)
 		{
-			return BITMAP;
+			return FileType::BITMAP;
 		}
 	}
-	return INVALID;
+	return FileType::INVALID;
 }
 
 std::string FileTypeToString(FileType fileType)
 {
-	if (fileType == BITMAP)
+	switch (fileType)
 	{
-		return "BITMAP";
+		case FileType::BITMAP:
+			return "BITMAP";
+		case FileType::INVALID:
+			return "INVALID";
+		default:
+			return "none";
 	}
-	else if (fileType == INVALID)
-	{
-		return "INVALID";
-	}
-	return "none";
 }
 
 BitmapHeaderType SizeToBitmapHeaderType(unsigned int size)
 {
-	if (size == 40 || size == 124)
+	switch (size)
 	{
-		return BitmapHeaderType::BITMAPINFOHEADER;
+		case 40:
+		case 124:
+			return BitmapHeaderType::BITMAPINFOHEADER;
+		case 12:
+			return BitmapHeaderType::BITMAPCOREHEADER_OS21XBITMAPHEADER;
+		case 108:
+			return BitmapHeaderType::BITMAPV4HEADER;
+		default:
+			return BitmapHeaderType::UNSUPPORTED;
 	}
-	else if (size == 12)
-	{
-		return BitmapHeaderType::BITMAPCOREHEADER_OS21XBITMAPHEADER;
-	}
-	else if (size == 108)
-	{
-		return BitmapHeaderType::BITMAPV4HEADER;
-	}
-	return BitmapHeaderType::UNSUPPORTED;
 }
 
 std::string BitmapHeaderTypeToString(BitmapHeaderType bitmapHeaderType)

@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-enum FileType {
+enum class FileType {
 	INVALID,
 	BITMAP
 };

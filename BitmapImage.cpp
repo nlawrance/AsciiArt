@@ -30,7 +30,7 @@ void BitmapImage::ReadHeader()
 	fread(fileType, 1, 2, filePointer);
 	fileType[2] = '\0';
 	m_fileType = StringToFileType(fileType);
-	if ( m_fileType != BITMAP )
+	if ( m_fileType != FileType::BITMAP )
 	{
     	std::cerr << "Only Bitmap format is supported.\n" 
 			<< "Given file was of type '" << fileType << "'.\n";
