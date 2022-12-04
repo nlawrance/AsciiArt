@@ -111,7 +111,7 @@ void MosaicImage::CreateMosaicImage(const BitmapImage& image)
 	{
 		for (int j = 0; j < imageWidth; j++)
 		{
-			std::string greyscaleValue = std::to_string(image.GetGreyScalePixelValue(i, j));
+			std::string greyscaleValue = std::to_string(image.GetPixelMatrix().GetGreyScalePixelValue(i, j));
 			greyscaleValue = FindClosestValue(greyscaleValue);
 
 			// srand(time(NULL));
@@ -127,7 +127,7 @@ void MosaicImage::CreateMosaicImage(const BitmapImage& image)
 			
 			for (int ii = 0; ii < pixelImage.GetHeight(); ii++) {
 				for (int jj = 0; jj < pixelImage.GetWidth(); jj++) {
-					int greyscaleValue = pixelImage.GetGreyScalePixelValue(ii, jj);
+					int greyscaleValue = pixelImage.GetPixelMatrix().GetGreyScalePixelValue(ii, jj);
 					int index = (ii + 100 * i) + superHeight * (jj + 100 * j);
 					superPixelMatrix.at(index) = greyscaleValue;
 				}

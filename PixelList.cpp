@@ -27,7 +27,7 @@ void PixelList::CreatePixelImageListFile(const std::string& directoryPath)
             {
                 BitmapImage image(path);
                 image.ReadPixelMarix();
-                int greyscale = image.GetAverageGreyScaleValue();
+                int greyscale = image.GetPixelMatrix().GetAverageGreyScaleValue();
 
                 if (tmpPixelImageList.find(greyscale) != tmpPixelImageList.end())
                 {

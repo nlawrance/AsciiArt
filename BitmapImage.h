@@ -30,22 +30,12 @@ class BitmapImage {
 		/**
 		*
 		*/
-		std::string PixelMatrixString() const;
-		
-		/**
-		*
-		*/
 		std::string PrintASCIIPixelMatrix(bool dark = false);
 
 		/**
 		 * 
 		 */
-		int GetGreyScalePixelValue(const int x, const int y) const;
-
-		/**
-		 * 
-		 */
-		double GetAverageGreyScaleValue() const;
+		const PixelMatrix& GetPixelMatrix() const;
 		
 		/**
 		* Getter methods

@@ -253,12 +253,6 @@ std::string BitmapImage::HeaderString()
 	return oss.str();
 }
 
-
-std::string BitmapImage::PixelMatrixString() const
-{
-	return m_pixelMatrix->ToString();
-}
-
 std::string BitmapImage::PrintASCIIPixelMatrix(bool dark)
 {
 	std::ostringstream oss;
@@ -273,7 +267,7 @@ std::string BitmapImage::PrintASCIIPixelMatrix(bool dark)
 		{
 			for (int x = 0; x < m_width; x++)
 			{
-				int greyScaleValue = GetGreyScalePixelValue(x, y);
+				int greyScaleValue = m_pixelMatrix->GetGreyScalePixelValue(x, y);
 				double max = 255;
 				
 				int value = static_cast<int>(floor(greyScaleValue/max * 17));
@@ -310,14 +304,9 @@ std::string BitmapImage::PrintASCIIPixelMatrix(bool dark)
 // 	}
 	
 	return oss.str();
-} 
-
-int BitmapImage::GetGreyScalePixelValue(const int x, const int y) const
-{
-	return m_pixelMatrix->GetGreyScalePixelValue(x, y);
 }
 
-double BitmapImage::GetAverageGreyScaleValue() const
+const PixelMatrix& BitmapImage::GetPixelMatrix() const
 {
-	return m_pixelMatrix->GetAverageGreyScaleValue();
+	return *m_pixelMatrix;
 }

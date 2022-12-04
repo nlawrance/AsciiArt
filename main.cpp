@@ -102,7 +102,7 @@ int main(int argc, char** argv)
     image.ReadPixelMarix();
     if (getAverageColour)
     {
-        std::cout << static_cast<int>(image.GetAverageGreyScaleValue()) << "_\n";
+        std::cout << static_cast<int>(image.GetPixelMatrix().GetAverageGreyScaleValue()) << "_\n";
     }
   
     if (!info)
