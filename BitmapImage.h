@@ -85,8 +85,7 @@ class BitmapImage {
 		*
 		*/
 		void ReadPixelMarix4Bpp(FILE* filePointer);
-		void ReadPixelMarix24Bpp(FILE* filePointer);
-		void ReadPixelMarix32Bpp(FILE* filePointer);
+		void ReadPixelMarix24Or32Bpp(FILE* filePointer);
 		
 		/**
 		*

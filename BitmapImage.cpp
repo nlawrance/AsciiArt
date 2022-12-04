@@ -144,11 +144,9 @@ void BitmapImage::ReadPixelMarix()
 		case 4: 
 			ReadPixelMarix4Bpp(filePointer);
 			break;
-		case 24: 
-			ReadPixelMarix24Bpp(filePointer);
-			break;
+		case 24:
 		case 32:
-			ReadPixelMarix32Bpp(filePointer);
+			ReadPixelMarix24Or32Bpp(filePointer);
 			break;
 		default:
 			fclose(filePointer);
@@ -192,73 +190,57 @@ void BitmapImage::ReadPixelMarix4Bpp(FILE* filePointer)
 	}
 }
 
-
-void BitmapImage::ReadPixelMarix24Bpp(FILE* filePointer)
+void BitmapImage::ReadPixelMarix24Or32Bpp(FILE* filePointer)
 {
-	m_pixelMatrix = std::vector<int>(3 * m_height * m_width, 0);
-	for (int i = 0; i < m_height; i++)
+	size_t elementSize = 0;
+	switch (m_bpp)
 	{
-		for (int j = 0; j < m_width; j++)
-		{
-			unsigned int pixel;
-			fread(&pixel, 3, 1, filePointer);
-			
-			unsigned int blue = (256 + pixel % 256) % 256;
-			unsigned int green = (256 + (pixel >> 8) % 256) % 256;
-			unsigned int red = (256 + (pixel >> 16) % 256) % 256;
-			
-			int index;
-			if (m_flipHeight)
-			{
-				index = 3*(i * m_width + j);
-			}
-			else
-			{
-				index = 3*((m_height - i - 1)*m_width  + j);
-			}
-			
-			m_pixelMatrix.at(index) = static_cast<int>(red);
-			m_pixelMatrix.at(index + 1) = static_cast<int>(green);
-			m_pixelMatrix.at(index + 2) = static_cast<int>(blue);
-			
-			if (j == m_width - 1)
-			{
-				// Read to the end of the line
-				fseek(filePointer, m_rowSize - m_width * 3, SEEK_CUR);
-			}
-		}
+		case 24:
+			elementSize = 3;
+			break;
+		case 32:
+			elementSize = 4;
+			break;
+		default:
+			fclose(filePointer);
+			std::ostringstream oss;
+			oss << "BitmapImage::ReadPixelMarix24Or32Bpp does not support " << m_bpp << " bpp.";
+			std::cerr << oss.str() << '\n';
+			throw std::runtime_error(oss.str());
 	}
-}
 
-
-void BitmapImage::ReadPixelMarix32Bpp(FILE* filePointer)
-{
-	unsigned int pixel;
-	m_pixelMatrix = std::vector<int>(3*m_height*m_width, 0);
+	m_pixelMatrix = std::vector<int>(3 * m_height * m_width, 0);
 	
 	for (int i = 0; i < m_height; i++)
 	{
 		for (int j = 0; j < m_width; j++)
 		{
-			fread(&pixel, 4, 1, filePointer);
-			
-			unsigned int blue = ((256+(pixel)%256))%256;
-			unsigned int green = (256 + (pixel>>8)%256)%256;
-			unsigned int red = (256 + (pixel>>16)%256)%256;
+			unsigned int pixel;
+			fread(&pixel, elementSize, 1, filePointer);
+
+			unsigned int blue = (256 + pixel % 256) % 256;
+			unsigned int green = (256 + (pixel >> 8) % 256) % 256;
+			unsigned int red = (256 + (pixel >> 16) % 256) % 256;
 
 			int index;
 			if (m_flipHeight)
 			{
-				index = 3*(i * m_width + j);
+				index = 3 * (i * m_width + j);
 			}
 			else
 			{
-				index = 3*((m_height - i - 1)*m_width  + j);
+				index = 3 * ((m_height - i - 1) * m_width  + j);
 			}
 			
 			m_pixelMatrix.at(index) = static_cast<int>(red);
 			m_pixelMatrix.at(index + 1) = static_cast<int>(green);
 			m_pixelMatrix.at(index + 2) = static_cast<int>(blue);
+
+			if (m_bpp == 24 && j == m_width - 1)
+			{
+				// Read to the end of the line
+				fseek(filePointer, m_rowSize - m_width * 3, SEEK_CUR);
+			}
 		}
 	}
 }
