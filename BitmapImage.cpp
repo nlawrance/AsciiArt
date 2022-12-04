@@ -4,11 +4,9 @@
 
 #include "BitmapImage.h"
 
-#include <cmath>
+#include <fstream>
 #include <iostream>
-#include <string>
 #include <sstream>
-#include <cstdio>
 
 BitmapImage::BitmapImage(std::string filename)
 	: m_filename(filename)
@@ -18,38 +16,38 @@ BitmapImage::BitmapImage(std::string filename)
 
 void BitmapImage::ReadHeader()
 {
-	FILE* filePointer = fopen(m_filename.c_str(), "r");
-	if (filePointer == nullptr)
+	std::ifstream input{m_filename, std::ios::binary};
+	if (!input.is_open())
 	{
     	std::cerr << "Could not open file.\n";
 		throw std::runtime_error("Could not open file");
 	}
-	 
+
 	// file type
 	char* fileType = new char[3];
-	fread(fileType, 1, 2, filePointer);
+	input.read(fileType, 2);
 	fileType[2] = '\0';
 	m_fileType = StringToFileType(fileType);
-	if ( m_fileType != FileType::Bitmap )
+	if (m_fileType != FileType::Bitmap)
 	{
     	std::cerr << "Only Bitmap format is supported.\n" 
 			<< "Given file was of type '" << fileType << "'.\n";
 		throw std::runtime_error("File is not in bitmap format");
 	}
 	delete[] fileType;
-	
+
 	// size of bitmap file in bytes
-	fread(&m_fileSize, 4, 1, filePointer);
+	input.read(reinterpret_cast<char*>(&m_fileSize), 4);
 	
 	// pass over reserved slots
 	int reservedSlots;
-	fread(&reservedSlots, 4, 1, filePointer);
+	input.read(reinterpret_cast<char*>(&reservedSlots), 4);
 	
 	// size of bitmap file in bytes
-	fread(&m_pixelOffset, 4, 1, filePointer);
+	input.read(reinterpret_cast<char*>(&m_pixelOffset), 4);
 	 
 	// header size
-	fread(&m_headerSize, 4, 1, filePointer);
+	input.read(reinterpret_cast<char*>(&m_headerSize), 4);
 	
 	m_headerType = SizeToBitmapHeaderType(m_headerSize);
 	switch (m_headerType)
@@ -57,13 +55,13 @@ void BitmapImage::ReadHeader()
 		case BitmapHeaderType::BitmapInfoHeader:
 		case BitmapHeaderType::BitmapV4Header:
 		case BitmapHeaderType::BitmapV5Header:
-			ReadBitmapInfoHeader(filePointer);
+			ReadBitmapInfoHeader(input);
 			break;
 		case BitmapHeaderType::BitmapCoreHeader_OS21XBitmapHeader:
-			ReadBitmapCoreHeader(filePointer);
+			ReadBitmapCoreHeader(input);
 			break;
 		default:
-			fclose(filePointer);
+    		input.close();
 			std::ostringstream oss;
 			oss << "Header type " << BitmapHeaderTypeToString(m_headerType) << " ("
 				<< m_headerSize << " bytes) is not supported.";
@@ -76,17 +74,17 @@ void BitmapImage::ReadHeader()
 	 */
 	m_rowSize = std::floor( ( m_bpp * m_width + 31 ) / 32 ) * 4;
 	m_pixelMatrixSize = m_rowSize * m_height;
-	
-	fclose(filePointer);
+
+    input.close();
 }
 
-void BitmapImage::ReadBitmapInfoHeader(FILE* filePointer)
+void BitmapImage::ReadBitmapInfoHeader(std::ifstream& filePointer)
 {
 	// width of image
-	fread(&m_width, 4, 1, filePointer);
+	filePointer.read(reinterpret_cast<char*>(&m_width), 4);
 	
 	// height of image
-	fread(&m_height, 4, 1, filePointer);
+	filePointer.read(reinterpret_cast<char*>(&m_height), 4);
 	if (m_height < 0) 
 	{
 		m_flipHeight = true;
@@ -94,36 +92,36 @@ void BitmapImage::ReadBitmapInfoHeader(FILE* filePointer)
 	}
 	
 	// number of colour planes
-	fread(&m_colourPlanes, 2, 1, filePointer);
+	filePointer.read(reinterpret_cast<char*>(&m_colourPlanes), 2);
 	
 	// the number of bits per pixel
-	fread(&m_bpp, 2, 1, filePointer);
+	filePointer.read(reinterpret_cast<char*>(&m_bpp), 2);
 	if (m_bpp < 0) m_bpp = pow(2, 2*8) + m_bpp;
 	
 	// the compression method being used
 	// NOTE: Non-zero compression methods may cause unintended behaviour.
-	fread(&m_compressionMethod, 4, 1, filePointer);
+	filePointer.read(reinterpret_cast<char*>(&m_compressionMethod), 4);
 	
 	// go to the end of the header
 	unsigned int tmp = 0;
 	for (int i = 0; i < 5; i++) {
-		fread(&tmp, 4, 1, filePointer);
+		filePointer.read(reinterpret_cast<char*>(&tmp), 4);
 	}
 }
 
-void BitmapImage::ReadBitmapCoreHeader(FILE* filePointer)
+void BitmapImage::ReadBitmapCoreHeader(std::ifstream& filePointer)
 {
 	// width of image
-	fread(&m_width, 2, 1, filePointer);
-	
+	filePointer.read(reinterpret_cast<char*>(&m_width), 2);
+
 	// height of image
-	fread(&m_height, 2, 1, filePointer);
+	filePointer.read(reinterpret_cast<char*>(&m_height), 2);
 	
 	// number of colour planes
-	fread(&m_colourPlanes, 2, 1, filePointer);
+	filePointer.read(reinterpret_cast<char*>(&m_colourPlanes), 2);
 	
 	// The number of bits per pixel
-	fread(&m_bpp, 2, 1, filePointer);
+	filePointer.read(reinterpret_cast<char*>(&m_bpp), 2);
 } 
 
 void BitmapImage::ReadPixelMarix()

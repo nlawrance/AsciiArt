@@ -74,12 +74,12 @@ class BitmapImage {
 		/**
 		 * 
 		 */
-		void ReadBitmapInfoHeader(FILE* filePointer);
+		void ReadBitmapInfoHeader(std::ifstream& filePointer);
 
 		/**
 		 * 
 		 */
-		void ReadBitmapCoreHeader(FILE* filePointer);
+		void ReadBitmapCoreHeader(std::ifstream& filePointer);
 		
 		/**
 		*
