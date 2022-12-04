@@ -195,24 +195,25 @@ void BitmapImage::ReadPixelMarix4Bpp(FILE* filePointer)
 
 void BitmapImage::ReadPixelMarix24Bpp(FILE* filePointer)
 {
-	unsigned int pixel;
+	m_pixelMatrix = std::vector<int>(3 * m_height * m_width, 0);
 	
-	for (int i = 0; i < m_height*m_width; i++) {
-		
+	for (int i = 0; i < m_height * m_width; i++)
+	{
+		unsigned int pixel;
 		fread(&pixel, 3, 1, filePointer);
 		
-		unsigned int blue = ((256+(pixel)%256))%256;
-		unsigned int green = (256 + (pixel>>8)%256)%256;
-		unsigned int red = (256 + (pixel>>16)%256)%256;
+		unsigned int blue = (256 + pixel % 256) % 256;
+		unsigned int green = (256 + (pixel >> 8) % 256) % 256;
+		unsigned int red = (256 + (pixel >> 16) % 256) % 256;
 		
 		m_pixelMatrix.push_back(static_cast<int>(red));
 		m_pixelMatrix.push_back(static_cast<int>(green));
 		m_pixelMatrix.push_back(static_cast<int>(blue));
 		
-		if (i%m_width == m_width-1)
+		if (i % m_width == m_width - 1)
 		{
 			// Read to the end of the line
-			fseek(filePointer, m_rowSize - m_width*3, SEEK_CUR);
+			fseek(filePointer, m_rowSize - m_width * 3, SEEK_CUR);
 		}
 	}
 }
