@@ -17,10 +17,14 @@ enum class FileType {
  * 
  */
 enum class BitmapHeaderType {
-	Unsupported,
-	BitmapInfoHeader,
 	BitmapCoreHeader_OS21XBitmapHeader,
-	BitmapV4Header
+	BitmapInfoHeader,
+	BitmapV2InfoHeader,
+	BitmapV3InfoHeader,
+	BitmapV4Header,
+	BitmapV5Header,
+	OS22XBitmapHeader,
+	Unknown,
 };
 
 /**

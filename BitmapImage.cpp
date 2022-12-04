@@ -54,6 +54,7 @@ void BitmapImage::ReadHeader()
 	switch (SizeToBitmapHeaderType(m_headerSize))
 	{
 		case BitmapHeaderType::BitmapInfoHeader:
+		case BitmapHeaderType::BitmapV5Header:
 			ReadBitmapInfoHeader(filePointer);
 			break;
 		case BitmapHeaderType::BitmapCoreHeader_OS21XBitmapHeader:
