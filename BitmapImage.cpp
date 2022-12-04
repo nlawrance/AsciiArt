@@ -51,7 +51,8 @@ void BitmapImage::ReadHeader()
 	// header size
 	fread(&m_headerSize, 4, 1, filePointer);
 	
-	switch (SizeToBitmapHeaderType(m_headerSize))
+	const auto headerType = SizeToBitmapHeaderType(m_headerSize);
+	switch (headerType)
 	{
 		case BitmapHeaderType::BitmapInfoHeader:
 		case BitmapHeaderType::BitmapV5Header:
@@ -63,7 +64,8 @@ void BitmapImage::ReadHeader()
 		default:
 			fclose(filePointer);
 			std::ostringstream oss;
-			oss << "Header size " << m_headerSize << " is not supported.";
+			oss << "Header type " << BitmapHeaderTypeToString(headerType) << " ("
+				<< m_headerSize << " bytes) is not supported.";
 			std::cerr << oss.str() << '\n';
 			throw std::runtime_error(oss.str());
 	}
