@@ -30,7 +30,7 @@ void BitmapImage::ReadHeader()
 	fread(fileType, 1, 2, filePointer);
 	fileType[2] = '\0';
 	m_fileType = StringToFileType(fileType);
-	if ( m_fileType != FileType::BITMAP )
+	if ( m_fileType != FileType::Bitmap )
 	{
     	std::cerr << "Only Bitmap format is supported.\n" 
 			<< "Given file was of type '" << fileType << "'.\n";
@@ -51,7 +51,7 @@ void BitmapImage::ReadHeader()
 	// header size
 	fread(&m_headerSize, 4, 1, filePointer);
 	
-	if (SizeToBitmapHeaderType(m_headerSize) == BitmapHeaderType::BITMAPINFOHEADER)
+	if (SizeToBitmapHeaderType(m_headerSize) == BitmapHeaderType::BitmapInfoHeader)
 	{
 		// width of image
 		fread(&m_width, 4, 1, filePointer);
@@ -81,7 +81,7 @@ void BitmapImage::ReadHeader()
 			fread(&tmp, 4, 1, filePointer);
 		}
 	}
-	else if (SizeToBitmapHeaderType(m_headerSize) == BitmapHeaderType::BITMAPCOREHEADER_OS21XBITMAPHEADER)
+	else if (SizeToBitmapHeaderType(m_headerSize) == BitmapHeaderType::BitmapCoreHeader_OS21XBitmapHeader)
 	{
 		// width of image
 		fread(&m_width, 2, 1, filePointer);

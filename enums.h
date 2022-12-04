@@ -5,22 +5,40 @@
 #include <string>
 #include <vector>
 
+/**
+ * 
+ */
 enum class FileType {
-	INVALID,
-	BITMAP
+	Invalid,
+	Bitmap
 };
 
+/**
+ * 
+ */
 enum class BitmapHeaderType {
-	UNSUPPORTED,
-	BITMAPINFOHEADER,
-	BITMAPCOREHEADER_OS21XBITMAPHEADER,
-	BITMAPV4HEADER
+	Unsupported,
+	BitmapInfoHeader,
+	BitmapCoreHeader_OS21XBitmapHeader,
+	BitmapV4Header
 };
 
+/**
+ * 
+ */
 FileType StringToFileType(std::string string);
 
+/**
+ * 
+ */
 std::string FileTypeToString(FileType fileType);
 
+/**
+ * 
+ */
 BitmapHeaderType SizeToBitmapHeaderType(unsigned int size);
 
+/**
+ * 
+ */
 std::string BitmapHeaderTypeToString(BitmapHeaderType bitmapHeaderType);

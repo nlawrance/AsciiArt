@@ -11,19 +11,19 @@ FileType StringToFileType(std::string string)
 	{
 		if (string == format)
 		{
-			return FileType::BITMAP;
+			return FileType::Bitmap;
 		}
 	}
-	return FileType::INVALID;
+	return FileType::Invalid;
 }
 
 std::string FileTypeToString(FileType fileType)
 {
 	switch (fileType)
 	{
-		case FileType::BITMAP:
+		case FileType::Bitmap:
 			return "BITMAP";
-		case FileType::INVALID:
+		case FileType::Invalid:
 			return "INVALID";
 		default:
 			return "none";
@@ -36,13 +36,13 @@ BitmapHeaderType SizeToBitmapHeaderType(unsigned int size)
 	{
 		case 40:
 		case 124:
-			return BitmapHeaderType::BITMAPINFOHEADER;
+			return BitmapHeaderType::BitmapInfoHeader;
 		case 12:
-			return BitmapHeaderType::BITMAPCOREHEADER_OS21XBITMAPHEADER;
+			return BitmapHeaderType::BitmapCoreHeader_OS21XBitmapHeader;
 		case 108:
-			return BitmapHeaderType::BITMAPV4HEADER;
+			return BitmapHeaderType::BitmapV4Header;
 		default:
-			return BitmapHeaderType::UNSUPPORTED;
+			return BitmapHeaderType::Unsupported;
 	}
 }
 
@@ -50,11 +50,11 @@ std::string BitmapHeaderTypeToString(BitmapHeaderType bitmapHeaderType)
 {
 	switch (bitmapHeaderType)
 	{
-		case BitmapHeaderType::BITMAPINFOHEADER:
+		case BitmapHeaderType::BitmapInfoHeader:
 			return "BITMAPINFOHEADER";
-		case BitmapHeaderType::BITMAPCOREHEADER_OS21XBITMAPHEADER:
+		case BitmapHeaderType::BitmapCoreHeader_OS21XBitmapHeader:
 			return "BITMAPCOREHEADER or OS21XBITMAPHEADER";
-		case BitmapHeaderType::BITMAPV4HEADER:
+		case BitmapHeaderType::BitmapV4Header:
 			return "BITMAPV4HEADER";
 		default:
 			return "UNSUPPORTED";
