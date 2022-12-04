@@ -10,7 +10,7 @@ enum FileType {
 	BITMAP
 };
 
-enum BitmapHeaderType {
+enum class BitmapHeaderType {
 	UNSUPPORTED,
 	BITMAPINFOHEADER,
 	BITMAPCOREHEADER_OS21XBITMAPHEADER,

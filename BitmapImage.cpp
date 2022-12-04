@@ -19,7 +19,9 @@ BitmapImage::BitmapImage(std::string filename)
 void BitmapImage::ReadHeader()
 {
 	FILE* filePointer = fopen(m_filename.c_str(), "r");
-	if (filePointer == nullptr) {
+	if (filePointer == nullptr)
+	{
+    	std::cerr << "Could not open file.\n";
 		throw std::runtime_error("Could not open file");
 	}
 	 
@@ -49,7 +51,7 @@ void BitmapImage::ReadHeader()
 	// header size
 	fread(&m_headerSize, 4, 1, filePointer);
 	
-	if (SizeToBitmapHeaderType(m_headerSize) == BITMAPINFOHEADER)
+	if (SizeToBitmapHeaderType(m_headerSize) == BitmapHeaderType::BITMAPINFOHEADER)
 	{
 		// width of image
 		fread(&m_width, 4, 1, filePointer);
@@ -79,7 +81,7 @@ void BitmapImage::ReadHeader()
 			fread(&tmp, 4, 1, filePointer);
 		}
 	}
-	else if (SizeToBitmapHeaderType(m_headerSize) == BITMAPCOREHEADER_OS21XBITMAPHEADER)
+	else if (SizeToBitmapHeaderType(m_headerSize) == BitmapHeaderType::BITMAPCOREHEADER_OS21XBITMAPHEADER)
 	{
 		// width of image
 		fread(&m_width, 2, 1, filePointer);
@@ -98,6 +100,7 @@ void BitmapImage::ReadHeader()
 		fclose(filePointer);
 		std::ostringstream oss;
 		oss << "Header size " << m_headerSize << " is not supported.";
+		std::cerr << oss.str() << '\n';
 		throw std::runtime_error(oss.str());
 	}
 	
@@ -116,7 +119,9 @@ void BitmapImage::ReadPixelMarix()
 	m_pixelMatrix = RgbMartix();
 	
 	FILE* filePointer = fopen(m_filename.c_str(), "r");
-	if (filePointer == nullptr) {
+	if (filePointer == nullptr)
+	{
+    	std::cerr << "Could not open file.\n";
 		throw std::runtime_error("Could not open file");
 	}
 	
@@ -137,6 +142,7 @@ void BitmapImage::ReadPixelMarix()
 			fclose(filePointer);
 			std::ostringstream oss;
 			oss << "BPP " << m_bpp << " is not supported.";
+			std::cerr << oss.str() << '\n';
 			throw std::runtime_error(oss.str());
 	}
 	

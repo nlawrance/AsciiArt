@@ -34,32 +34,30 @@ BitmapHeaderType SizeToBitmapHeaderType(unsigned int size)
 {
 	if (size == 40 || size == 124)
 	{
-		return BITMAPINFOHEADER;
+		return BitmapHeaderType::BITMAPINFOHEADER;
 	}
 	else if (size == 12)
 	{
-		return BITMAPCOREHEADER_OS21XBITMAPHEADER;
+		return BitmapHeaderType::BITMAPCOREHEADER_OS21XBITMAPHEADER;
 	}
 	else if (size == 108)
 	{
-		return BITMAPV4HEADER;
+		return BitmapHeaderType::BITMAPV4HEADER;
 	}
-	return UNSUPPORTED;
+	return BitmapHeaderType::UNSUPPORTED;
 }
 
 std::string BitmapHeaderTypeToString(BitmapHeaderType bitmapHeaderType)
 {
-	if (bitmapHeaderType == BITMAPINFOHEADER)
+	switch (bitmapHeaderType)
 	{
-		return "BITMAPINFOHEADER";
+		case BitmapHeaderType::BITMAPINFOHEADER:
+			return "BITMAPINFOHEADER";
+		case BitmapHeaderType::BITMAPCOREHEADER_OS21XBITMAPHEADER:
+			return "BITMAPCOREHEADER or OS21XBITMAPHEADER";
+		case BitmapHeaderType::BITMAPV4HEADER:
+			return "BITMAPV4HEADER";
+		default:
+			return "UNSUPPORTED";
 	}
-	else if (bitmapHeaderType == BITMAPCOREHEADER_OS21XBITMAPHEADER)
-	{
-		return "BITMAPCOREHEADER or OS21XBITMAPHEADER";
-	}
-	else if (bitmapHeaderType == BITMAPV4HEADER)
-	{
-		return "BITMAPV4HEADER";
-	}
-	return "UNSUPPORTED";
 }
