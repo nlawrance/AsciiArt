@@ -196,24 +196,36 @@ void BitmapImage::ReadPixelMarix4Bpp(FILE* filePointer)
 void BitmapImage::ReadPixelMarix24Bpp(FILE* filePointer)
 {
 	m_pixelMatrix = std::vector<int>(3 * m_height * m_width, 0);
-	
-	for (int i = 0; i < m_height * m_width; i++)
+	for (int i = 0; i < m_height; i++)
 	{
-		unsigned int pixel;
-		fread(&pixel, 3, 1, filePointer);
-		
-		unsigned int blue = (256 + pixel % 256) % 256;
-		unsigned int green = (256 + (pixel >> 8) % 256) % 256;
-		unsigned int red = (256 + (pixel >> 16) % 256) % 256;
-		
-		m_pixelMatrix.push_back(static_cast<int>(red));
-		m_pixelMatrix.push_back(static_cast<int>(green));
-		m_pixelMatrix.push_back(static_cast<int>(blue));
-		
-		if (i % m_width == m_width - 1)
+		for (int j = 0; j < m_width; j++)
 		{
-			// Read to the end of the line
-			fseek(filePointer, m_rowSize - m_width * 3, SEEK_CUR);
+			unsigned int pixel;
+			fread(&pixel, 3, 1, filePointer);
+			
+			unsigned int blue = (256 + pixel % 256) % 256;
+			unsigned int green = (256 + (pixel >> 8) % 256) % 256;
+			unsigned int red = (256 + (pixel >> 16) % 256) % 256;
+			
+			int index;
+			if (m_flipHeight)
+			{
+				index = 3*(i * m_width + j);
+			}
+			else
+			{
+				index = 3*((m_height - i - 1)*m_width  + j);
+			}
+			
+			m_pixelMatrix.at(index) = static_cast<int>(red);
+			m_pixelMatrix.at(index + 1) = static_cast<int>(green);
+			m_pixelMatrix.at(index + 2) = static_cast<int>(blue);
+			
+			if (j == m_width - 1)
+			{
+				// Read to the end of the line
+				fseek(filePointer, m_rowSize - m_width * 3, SEEK_CUR);
+			}
 		}
 	}
 }
