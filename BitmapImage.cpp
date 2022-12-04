@@ -204,9 +204,9 @@ void BitmapImage::ReadPixelMarix24Or32Bpp(FILE* filePointer)
 			throw std::runtime_error(oss.str());
 	}
 	
-	for (int i = 0; i < m_height; i++)
+	for (int y = 0; y < m_height; y++)
 	{
-		for (int j = 0; j < m_width; j++)
+		for (int x = 0; x < m_width; x++)
 		{
 			unsigned int pixel;
 			fread(&pixel, elementSize, 1, filePointer);
@@ -216,11 +216,11 @@ void BitmapImage::ReadPixelMarix24Or32Bpp(FILE* filePointer)
 			const unsigned int red = (256 + (pixel >> 16) % 256) % 256;
 			Pixel p{red, green, blue};
 
-			const unsigned int xCoord = m_width - j - 1;
-			const unsigned int yCoord = (m_flipHeight) ? m_height - i - 1 : i;
+			const unsigned int xCoord = x;
+			const unsigned int yCoord = (m_flipHeight) ? y : m_height - y - 1;
 			m_pixelMatrix->SetPixelAtPosition(p, xCoord, yCoord);
 
-			if (m_bpp == 24 && j == m_width - 1)
+			if (m_bpp == 24 && x == m_width - 1)
 			{
 				// Read to the end of the line
 				fseek(filePointer, m_rowSize - m_width * 3, SEEK_CUR);
@@ -269,11 +269,11 @@ std::string BitmapImage::PrintASCIIPixelMatrix(bool dark)
 			"WWW", "000", "QQQ", "AAA", "WW ", "00 ", "QQ ", "AA ", "$$ ", "oo ",
 			">> ", "\"\" ", "\'\' ", ",, ", ":: ", "-- ", "__ ", ".. "
 		};
-		for (int i = 0; i < m_height; i++)
+		for (int y = 0; y < m_height; y++)
 		{
-			for (int j = 0; j < m_width; j++)
+			for (int x = 0; x < m_width; x++)
 			{
-				int greyScaleValue = GetGreyScalePixelValue(i, j);
+				int greyScaleValue = GetGreyScalePixelValue(x, y);
 				double max = 255;
 				
 				int value = static_cast<int>(floor(greyScaleValue/max * 17));

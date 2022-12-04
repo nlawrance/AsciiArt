@@ -114,7 +114,7 @@ void MosaicImage::CreateMosaicImage(const BitmapImage& image)
 			std::string greyscaleValue = std::to_string(image.GetGreyScalePixelValue(i, j));
 			greyscaleValue = FindClosestValue(greyscaleValue);
 
-			srand(time(NULL));
+			// srand(time(NULL));
 			
 			int index = rand() % m_pixelImageList[greyscaleValue].size();
 			const std::string pixelImageName = m_pixelImageList[greyscaleValue][index];
