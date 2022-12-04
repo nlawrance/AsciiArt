@@ -165,19 +165,19 @@ void BitmapImage::ReadPixelMarix4Bpp(FILE* filePointer)
 	// How big the chunks taken from the file will be
 	int psize = 1;
 	
-	for (int i = m_height-1; i > -1; i--) {
+	for (int i = m_height - 1; i > -1; i--) {
 		
 		char* tmp = new char[m_rowSize];
-		fread(tmp, psize, m_rowSize/psize, filePointer);
+		fread(tmp, psize, m_rowSize / psize, filePointer);
  
 		for (int j = 0; j < m_rowSize; j++) {
 			// For each byte in the row
-			int firstGreyScaleValue = ((*tmp)>>4)%16;
+			int firstGreyScaleValue = ((*tmp) >> 4) % 16;
 			m_pixelMatrix.push_back(firstGreyScaleValue);
 			m_pixelMatrix.push_back(firstGreyScaleValue);
 			m_pixelMatrix.push_back(firstGreyScaleValue);
 			
-			int secondGreyScaleValue = (*tmp)%16;
+			int secondGreyScaleValue = (*tmp) % 16;
 			m_pixelMatrix.push_back(secondGreyScaleValue);
 			m_pixelMatrix.push_back(secondGreyScaleValue);
 			m_pixelMatrix.push_back(secondGreyScaleValue);
