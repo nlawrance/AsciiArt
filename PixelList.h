@@ -11,6 +11,7 @@ class PixelList
 
         /**
          * 
+         * @param directoryPath
          */
-        void CreatePixelImageListFile(std::string pDir);
+        void CreatePixelImageListFile(const std::string& directoryPath);
 };

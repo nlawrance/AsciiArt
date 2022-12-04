@@ -7,64 +7,47 @@
 #include "BitmapImage.h"
 
 #include <cstring>
-#include <dirent.h>
 #include <exception>
 #include <fstream>
+#include <filesystem>
 #include <iostream>
 #include <map>
 
 PixelList::PixelList() {}
 
-void PixelList::CreatePixelImageListFile(std::string pDir)
+void PixelList::CreatePixelImageListFile(const std::string& directoryPath)
 {
-	DIR *dir;
-    struct dirent *dent;
-    // open the directory containing the pixel images
-    dir = opendir(pDir.c_str());
     std::map<int, std::vector<std::string>> tmpPixelImageList;
-    
-    if (dir != NULL) {
-        while ((dent=readdir(dir)) != NULL) {
-        	if (*(dent->d_name) != '.') {
-        	
-        		// Is it a file or a directory?
-        		bool isFile = false;
-        		// Parse the directory name for a '.'
-        		for (char *tmp = dent->d_name; *tmp != '\0'; tmp++) {
-        			if (strcmp(tmp, ".bmp") == 0) {
-        				isFile = true;
-        			}
-        		}
-        		
-        		// If it is a file
-				if (isFile) {
-                    try
-                    {
-                        BitmapImage image(pDir + dent->d_name);
-                        image.ReadPixelMarix();
-                        int greyscale = image.GetAverageGreyScaleValue();
+    for (const auto& entry : std::filesystem::directory_iterator{directoryPath})
+    {
+        // If it is a file
+        if (!entry.is_directory()) {
+            const std::string path = entry.path().generic_string();
+            try
+            {
+                BitmapImage image(path);
+                image.ReadPixelMarix();
+                int greyscale = image.GetAverageGreyScaleValue();
 
-                        if (tmpPixelImageList.find(greyscale) != tmpPixelImageList.end())
-                        {
-                            tmpPixelImageList[greyscale].push_back(dent->d_name);
-                        }
-                        else
-                        {
-                            tmpPixelImageList[greyscale] = std::vector<std::string> {dent->d_name};
-                        }
-                    }
-                    catch (std::exception& e)
-                    {
-                        std::cerr << "Error reading " << pDir + dent->d_name << "\n";
-                        std::cerr << e.what() << "\n";
-                    }
-				}
-			}
+                if (tmpPixelImageList.find(greyscale) != tmpPixelImageList.end())
+                {
+                    tmpPixelImageList[greyscale].push_back(path);
+                }
+                else
+                {
+                    tmpPixelImageList[greyscale] = std::vector<std::string> {path};
+                }
+            }
+            catch (std::exception& e)
+            {
+                std::cerr << "Error reading " << path << "\n";
+                std::cerr << e.what() << "\n";
+            }
         }
+        std::cout << entry.path() << std::endl;
     }
-    closedir(dir);
 
-    std::string listFilename = pDir + "pixelList.txt";
+    std::string listFilename = directoryPath + "pixelList.txt";
     std::ofstream pixelListFile;
     pixelListFile.open(listFilename);
 
