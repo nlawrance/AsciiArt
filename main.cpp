@@ -60,7 +60,7 @@ int main(int argc, char** argv)
                         info = true;
                         break;
                     case 'm':
-                        mosaicPixelDirectory = strdup(*(argv + 1));
+                        mosaicPixelDirectory = *(argv + 1);
                         skipNext = true;
                         break;
                     default:
@@ -118,5 +118,5 @@ int main(int argc, char** argv)
         }
     }
   
-    return 0;
+    return EXIT_SUCCESS;
 } 

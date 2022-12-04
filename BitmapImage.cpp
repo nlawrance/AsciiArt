@@ -12,18 +12,6 @@
 
 BitmapImage::BitmapImage(std::string filename)
 	: m_filename(filename)
-	, m_fileType(INVALID)
-	, m_fileSize(0)
-	, m_pixelOffset(0)
-	, m_headerSize(0)
-	, m_width(0)
-	, m_height(0)
-	, m_flipHeight(false)
-	, m_colourPlanes(0)
-	, m_bpp(0)
-	, m_compressionMethod(0)
-	, m_rowSize(0)
-	, m_pixelMatrixSize(0)
 {
 	ReadHeader();
 }

@@ -84,18 +84,18 @@ class BitmapImage {
 		int RgbToGreyScale(int red, int green, int blue);
 		
 		std::string m_filename;
-		FileType m_fileType;
-		int m_fileSize;
-		int m_pixelOffset;
-		int m_headerSize;
-		int m_width;
-		int m_height;
-		bool m_flipHeight;
-		int m_colourPlanes;
-		int m_bpp;
-		int m_compressionMethod;
-		int m_rowSize;
-		int m_pixelMatrixSize;
+		FileType m_fileType = INVALID;
+		int m_fileSize = 0;
+		int m_pixelOffset = 0;
+		int m_headerSize = 0;
+		int m_width = 0;
+		int m_height = 0;
+		bool m_flipHeight = false;
+		int m_colourPlanes = 0;
+		int m_bpp = 0;
+		int m_compressionMethod = 0;
+		int m_rowSize = 0;
+		int m_pixelMatrixSize = 0;
 		
 		RgbMartix m_pixelMatrix;
 		
