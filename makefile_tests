@@ -1,0 +1,39 @@
+#
+#
+#	Created by Nicholas Lawrance 24th Jan 2016
+#
+#
+
+CC=g++
+CFLAGS=-std=c++20 -Wall
+OBJECTS=tests.o BitmapImage.o enums.o BitmapImageTests.o MosaicImage.o MosaicImageTests.o PixelList.o PixelListTest.o
+EXECUTABLE=TestAsciiArt
+LIBS=-lcppunit
+
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE) $(LIBS)
+	
+.cpp.o:
+	$(CC) $(CFLAGS) -c $<
+	
+tests.o:
+
+BitmapImage.o: BitmapImage.h enums.h
+
+BitmapImageTests.o: BitmapImage.h
+
+MosaicImage.o: MosaicImage.h
+
+MosaicImageTests.o: MosaicImage.h
+
+PixelList.o: PixelList.h
+
+PixelListTests.o: PixelList.h
+
+enums.o: enums.h
+
+clean:
+	rm *o $(EXECUTABLE)
+
+open:
+	open -a TextWrangler *.h *.cpp makefile*
