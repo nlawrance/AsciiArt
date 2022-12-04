@@ -51,57 +51,20 @@ void BitmapImage::ReadHeader()
 	// header size
 	fread(&m_headerSize, 4, 1, filePointer);
 	
-	if (SizeToBitmapHeaderType(m_headerSize) == BitmapHeaderType::BitmapInfoHeader)
+	switch (SizeToBitmapHeaderType(m_headerSize))
 	{
-		// width of image
-		fread(&m_width, 4, 1, filePointer);
-		
-		// height of image
-		fread(&m_height, 4, 1, filePointer);
-		if (m_height < 0) 
-		{
-			m_flipHeight = true;
-			m_height *= -1;
-		}
-		
-		// number of colour planes
-		fread(&m_colourPlanes, 2, 1, filePointer);
-		
-		// the number of bits per pixel
-		fread(&m_bpp, 2, 1, filePointer);
-		if (m_bpp < 0) m_bpp = pow(2, 2*8) + m_bpp;
-		
-		// the compression method being used
-		// NOTE: Non-zero compression methods may cause unintended behaviour.
-		fread(&m_compressionMethod, 4, 1, filePointer);
-		
-		// go to the end of the header
-		unsigned int tmp = 0;
-		for (int i = 0; i < 5; i++) {
-			fread(&tmp, 4, 1, filePointer);
-		}
-	}
-	else if (SizeToBitmapHeaderType(m_headerSize) == BitmapHeaderType::BitmapCoreHeader_OS21XBitmapHeader)
-	{
-		// width of image
-		fread(&m_width, 2, 1, filePointer);
-		
-		// height of image
-		fread(&m_height, 2, 1, filePointer);
-		
-		// number of colour planes
-		fread(&m_colourPlanes, 2, 1, filePointer);
-		
-		// The number of bits per pixel
-		fread(&m_bpp, 2, 1, filePointer);
-	} 
-	else 
-	{
-		fclose(filePointer);
-		std::ostringstream oss;
-		oss << "Header size " << m_headerSize << " is not supported.";
-		std::cerr << oss.str() << '\n';
-		throw std::runtime_error(oss.str());
+		case BitmapHeaderType::BitmapInfoHeader:
+			ReadBitmapInfoHeader(filePointer);
+			break;
+		case BitmapHeaderType::BitmapCoreHeader_OS21XBitmapHeader:
+			ReadBitmapCoreHeader(filePointer);
+			break;
+		default:
+			fclose(filePointer);
+			std::ostringstream oss;
+			oss << "Header size " << m_headerSize << " is not supported.";
+			std::cerr << oss.str() << '\n';
+			throw std::runtime_error(oss.str());
 	}
 	
 	/*
@@ -113,6 +76,51 @@ void BitmapImage::ReadHeader()
 	fclose(filePointer);
 }
 
+void BitmapImage::ReadBitmapInfoHeader(FILE* filePointer)
+{
+	// width of image
+	fread(&m_width, 4, 1, filePointer);
+	
+	// height of image
+	fread(&m_height, 4, 1, filePointer);
+	if (m_height < 0) 
+	{
+		m_flipHeight = true;
+		m_height *= -1;
+	}
+	
+	// number of colour planes
+	fread(&m_colourPlanes, 2, 1, filePointer);
+	
+	// the number of bits per pixel
+	fread(&m_bpp, 2, 1, filePointer);
+	if (m_bpp < 0) m_bpp = pow(2, 2*8) + m_bpp;
+	
+	// the compression method being used
+	// NOTE: Non-zero compression methods may cause unintended behaviour.
+	fread(&m_compressionMethod, 4, 1, filePointer);
+	
+	// go to the end of the header
+	unsigned int tmp = 0;
+	for (int i = 0; i < 5; i++) {
+		fread(&tmp, 4, 1, filePointer);
+	}
+}
+
+void BitmapImage::ReadBitmapCoreHeader(FILE* filePointer)
+{
+	// width of image
+	fread(&m_width, 2, 1, filePointer);
+	
+	// height of image
+	fread(&m_height, 2, 1, filePointer);
+	
+	// number of colour planes
+	fread(&m_colourPlanes, 2, 1, filePointer);
+	
+	// The number of bits per pixel
+	fread(&m_bpp, 2, 1, filePointer);
+} 
 
 void BitmapImage::ReadPixelMarix()
 {

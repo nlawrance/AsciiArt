@@ -70,6 +70,16 @@ class BitmapImage {
 		* Reads and stores the metadata from the bitmap's header
 		*/
 		void ReadHeader();
+
+		/**
+		 * 
+		 */
+		void ReadBitmapInfoHeader(FILE* filePointer);
+
+		/**
+		 * 
+		 */
+		void ReadBitmapCoreHeader(FILE* filePointer);
 		
 		/**
 		*
