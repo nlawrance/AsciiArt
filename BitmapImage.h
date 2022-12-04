@@ -3,10 +3,11 @@
 */
 
 #include "enums.h"
+#include "PixelMatrix.h"
 
-#include <string>
+#include <memory>
 
-typedef std::vector<int> RgbMartix;
+class PixelMatrix;
 
 class BitmapImage {
 	
@@ -29,7 +30,7 @@ class BitmapImage {
 		/**
 		*
 		*/
-		std::string PixelMatrixString();
+		std::string PixelMatrixString() const;
 		
 		/**
 		*
@@ -39,12 +40,12 @@ class BitmapImage {
 		/**
 		 * 
 		 */
-		int GetGreyScalePixelValue(const int x, const int y);
+		int GetGreyScalePixelValue(const int x, const int y) const;
 
 		/**
 		 * 
 		 */
-		double GetAverageGreyScaleValue();
+		double GetAverageGreyScaleValue() const;
 		
 		/**
 		* Getter methods
@@ -87,11 +88,6 @@ class BitmapImage {
 		void ReadPixelMarix4Bpp(FILE* filePointer);
 		void ReadPixelMarix24Or32Bpp(FILE* filePointer);
 		
-		/**
-		*
-		*/
-		int RgbToGreyScale(int red, int green, int blue);
-		
 		std::string m_filename;
 		FileType m_fileType = FileType::Invalid;
 		BitmapHeaderType m_headerType = BitmapHeaderType::Unknown;
@@ -107,9 +103,5 @@ class BitmapImage {
 		int m_rowSize = 0;
 		int m_pixelMatrixSize = 0;
 		
-		RgbMartix m_pixelMatrix;
-		
-		constexpr static double RED_WEIGHT = 0.2126;
-		constexpr static double GREEN_WEIGHT = 0.7152;
-		constexpr static double BLUE_WEIGHT = 0.07222;
+		std::unique_ptr<PixelMatrix> m_pixelMatrix = nullptr;
 };

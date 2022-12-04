@@ -12,6 +12,7 @@ BitmapImage::BitmapImage(std::string filename)
 	: m_filename(filename)
 {
 	ReadHeader();
+	m_pixelMatrix = std::make_unique<PixelMatrix>(m_height, m_width);
 }
 
 void BitmapImage::ReadHeader()
@@ -126,8 +127,6 @@ void BitmapImage::ReadBitmapCoreHeader(std::ifstream& fileStream)
 
 void BitmapImage::ReadPixelMarix()
 {
-	m_pixelMatrix = RgbMartix();
-	
 	FILE* filePointer = fopen(m_filename.c_str(), "r");
 	if (filePointer == nullptr)
 	{
@@ -170,15 +169,13 @@ void BitmapImage::ReadPixelMarix4Bpp(FILE* filePointer)
  
 		for (int j = 0; j < m_rowSize; j++) {
 			// For each byte in the row
-			int firstGreyScaleValue = ((*tmp) >> 4) % 16;
-			m_pixelMatrix.push_back(firstGreyScaleValue);
-			m_pixelMatrix.push_back(firstGreyScaleValue);
-			m_pixelMatrix.push_back(firstGreyScaleValue);
+			unsigned int firstGreyScaleValue = ((*tmp) >> 4) % 16;
+			Pixel p1{firstGreyScaleValue};
+			m_pixelMatrix->SetPixelAtPosition(p1, i, j * 2);
 			
-			int secondGreyScaleValue = (*tmp) % 16;
-			m_pixelMatrix.push_back(secondGreyScaleValue);
-			m_pixelMatrix.push_back(secondGreyScaleValue);
-			m_pixelMatrix.push_back(secondGreyScaleValue);
+			unsigned int secondGreyScaleValue = (*tmp) % 16;
+			Pixel p2{secondGreyScaleValue};
+			m_pixelMatrix->SetPixelAtPosition(p2, i, j * 2 + 1);
 			
 			// Move to the next chunk read from the file.
 			tmp++;
@@ -206,8 +203,6 @@ void BitmapImage::ReadPixelMarix24Or32Bpp(FILE* filePointer)
 			std::cerr << oss.str() << '\n';
 			throw std::runtime_error(oss.str());
 	}
-
-	m_pixelMatrix = std::vector<int>(3 * m_height * m_width, 0);
 	
 	for (int i = 0; i < m_height; i++)
 	{
@@ -216,23 +211,14 @@ void BitmapImage::ReadPixelMarix24Or32Bpp(FILE* filePointer)
 			unsigned int pixel;
 			fread(&pixel, elementSize, 1, filePointer);
 
-			unsigned int blue = (256 + pixel % 256) % 256;
-			unsigned int green = (256 + (pixel >> 8) % 256) % 256;
-			unsigned int red = (256 + (pixel >> 16) % 256) % 256;
+			const unsigned int blue = (256 + pixel % 256) % 256;
+			const unsigned int green = (256 + (pixel >> 8) % 256) % 256;
+			const unsigned int red = (256 + (pixel >> 16) % 256) % 256;
+			Pixel p{red, green, blue};
 
-			int index;
-			if (m_flipHeight)
-			{
-				index = 3 * (i * m_width + j);
-			}
-			else
-			{
-				index = 3 * ((m_height - i - 1) * m_width  + j);
-			}
-			
-			m_pixelMatrix.at(index) = static_cast<int>(red);
-			m_pixelMatrix.at(index + 1) = static_cast<int>(green);
-			m_pixelMatrix.at(index + 2) = static_cast<int>(blue);
+			const unsigned int xCoord = m_width - j - 1;
+			const unsigned int yCoord = (m_flipHeight) ? m_height - i - 1 : i;
+			m_pixelMatrix->SetPixelAtPosition(p, xCoord, yCoord);
 
 			if (m_bpp == 24 && j == m_width - 1)
 			{
@@ -268,21 +254,9 @@ std::string BitmapImage::HeaderString()
 }
 
 
-std::string BitmapImage::PixelMatrixString()
+std::string BitmapImage::PixelMatrixString() const
 {
-	std::ostringstream oss;
-	
-	for (auto colour : m_pixelMatrix)
-	{
-		oss << colour << " ";
-	}
-	
-	return oss.str();
-}
-
-int BitmapImage::RgbToGreyScale(int red, int green, int blue)
-{
-	return RED_WEIGHT * red + GREEN_WEIGHT * green + BLUE_WEIGHT * blue;	
+	return m_pixelMatrix->ToString();
 }
 
 std::string BitmapImage::PrintASCIIPixelMatrix(bool dark)
@@ -338,25 +312,12 @@ std::string BitmapImage::PrintASCIIPixelMatrix(bool dark)
 	return oss.str();
 } 
 
-int BitmapImage::GetGreyScalePixelValue(const int x, const int y)
+int BitmapImage::GetGreyScalePixelValue(const int x, const int y) const
 {
-	int index = 3 * (x * m_width + y);
-
-	int red = m_pixelMatrix[index];
-	int green = m_pixelMatrix[index + 1];
-	int blue = m_pixelMatrix[index + 2];
-
-	return RgbToGreyScale(red, green, blue);
+	return m_pixelMatrix->GetGreyScalePixelValue(x, y);
 }
 
-double BitmapImage::GetAverageGreyScaleValue()
+double BitmapImage::GetAverageGreyScaleValue() const
 {
-	long total = 0;
-	for (int i = 0; i < m_height; i++) {
-		for (int j = 0; j < m_width; j++)
-		{
-			total += GetGreyScalePixelValue(i, j);
-		}
-	}
-	return (total/static_cast<double>(m_width))/m_height;
+	return m_pixelMatrix->GetAverageGreyScaleValue();
 }

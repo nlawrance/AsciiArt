@@ -95,7 +95,7 @@ std::string MosaicImage::FindClosestValue(const std::string& value)
 	return "";
 }
 
-void MosaicImage::CreateMosaicImage(BitmapImage image)
+void MosaicImage::CreateMosaicImage(const BitmapImage& image)
 {
 	int pixelSize = 100;
 

@@ -27,7 +27,7 @@ class MosaicImage {
         /**
          * 
          */
-        void CreateMosaicImage(BitmapImage image);
+        void CreateMosaicImage(const BitmapImage& image);
 
     private:
         /**
