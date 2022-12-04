@@ -51,10 +51,11 @@ void BitmapImage::ReadHeader()
 	// header size
 	fread(&m_headerSize, 4, 1, filePointer);
 	
-	const auto headerType = SizeToBitmapHeaderType(m_headerSize);
-	switch (headerType)
+	m_headerType = SizeToBitmapHeaderType(m_headerSize);
+	switch (m_headerType)
 	{
 		case BitmapHeaderType::BitmapInfoHeader:
+		case BitmapHeaderType::BitmapV4Header:
 		case BitmapHeaderType::BitmapV5Header:
 			ReadBitmapInfoHeader(filePointer);
 			break;
@@ -64,7 +65,7 @@ void BitmapImage::ReadHeader()
 		default:
 			fclose(filePointer);
 			std::ostringstream oss;
-			oss << "Header type " << BitmapHeaderTypeToString(headerType) << " ("
+			oss << "Header type " << BitmapHeaderTypeToString(m_headerType) << " ("
 				<< m_headerSize << " bytes) is not supported.";
 			std::cerr << oss.str() << '\n';
 			throw std::runtime_error(oss.str());
@@ -254,21 +255,21 @@ std::string BitmapImage::HeaderString()
 {
 	std::ostringstream oss;
 	
-	oss << "fileType == " << FileTypeToString(m_fileType) << std::endl;
-	oss << "fileSize == " << m_fileSize << " bytes" << std::endl;
-	oss << "pixelOffset == " << m_pixelOffset << " bytes" << std::endl;
-	oss << "headSize == " << m_headerSize << std::endl;
+	oss << "File Type: " << FileTypeToString(m_fileType) << "\n";
+	oss << "File Size: " << m_fileSize << " bytes\n";
+	oss << "Pixel Offset: " << m_pixelOffset << " bytes\n";
+	oss << "Header Type: " << BitmapHeaderTypeToString(m_headerType) << " (" << m_headerSize << " bytes)\n";
 
-	oss << "flipheight == " << ((m_flipHeight) ? "true" : "false") << "\n";
+	oss << "Flip Height: " << ((m_flipHeight) ? "true" : "false") << "\n";
 
-	oss << "width == " << m_width << std::endl;
-	oss << "height == " << m_height << std::endl;
-	oss << "colourPlanes == " << m_colourPlanes << std::endl;
-	oss << "bpp == " << m_bpp << std::endl;
-	oss << "compMethod == " << m_compressionMethod << std::endl;
+	oss << "Width: " << m_width << "\n";
+	oss << "Height: " << m_height << "\n";
+	oss << "Colour Planes: " << m_colourPlanes << "\n";
+	oss << "Bits Per Pixel: " << m_bpp << "\n";
+	oss << "Comp Method: " << m_compressionMethod << "\n";
 	
-	oss << "row size == " << m_rowSize << " bytes" << std::endl;
-	oss << "pixel matrix size == " << m_pixelMatrixSize << " bytes" << std::endl;
+	oss << "Row Size: " << m_rowSize << " bytes\n";
+	oss << "Pixel Matrix Size: " << m_pixelMatrixSize << " bytes\n";
 	
 	return oss.str();
 }

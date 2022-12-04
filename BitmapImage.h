@@ -95,6 +95,7 @@ class BitmapImage {
 		
 		std::string m_filename;
 		FileType m_fileType = FileType::Invalid;
+		BitmapHeaderType m_headerType = BitmapHeaderType::Unknown;
 		int m_fileSize = 0;
 		int m_pixelOffset = 0;
 		int m_headerSize = 0;
