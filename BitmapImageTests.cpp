@@ -7,7 +7,7 @@
 #include "BitmapImage.h"
 
 class BitmapImageTests : public CppUnit::TestFixture {
-	
+	 
 	CPPUNIT_TEST_SUITE( BitmapImageTests );
 	CPPUNIT_TEST( TestCreateBitmapImageWithHeaderSize40 );
 	CPPUNIT_TEST( TestCreateBitmapImageWithHeaderSize108 );
